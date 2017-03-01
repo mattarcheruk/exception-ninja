@@ -1,0 +1,33 @@
+{
+    "manifest_version": 2,
+
+    "version": "1.0",
+    "name": "Exception Ninja",
+    "description": "An extension to analyse Kibana exceptions to find what is an actual root cause of the exception.",
+
+    "icons": {
+        "16": "images/ninja16.png",
+        "48": "images/ninja48.png",
+        "128": "images/ninja128.png"
+    },
+
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+
+    "content_scripts": [
+        {
+            "matches": ["http://*/*", "https://*/*"],
+            "js": ["content.js"]
+        }
+    ],
+
+    "browser_action": {
+        "default_title": "Hack'n'slash the exceptions!"
+    },
+
+    "permissions": [
+        "activeTab"
+    ]
+}
