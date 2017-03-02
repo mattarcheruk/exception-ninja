@@ -55,6 +55,8 @@ function analyseExceptions(json)
 
     var hitCount = frontendExceptions.length;
 
+    console.log("hitCounter = " , hitCount);
+
     for (i = 0; i < hitCount; i++)
     {
 
@@ -131,6 +133,7 @@ function analyseExceptions(json)
 
 function sortOutput(sortme)
 {
+    var returnArray = [];
     var keys = [];
     for (var key in sortme)
     {
@@ -154,16 +157,27 @@ function sortOutput(sortme)
         var filingIdCnt = "unknown";
         if (hitMapFilingId[key] !== undefined) filingIdCnt = hitMapFilingId[key].length;
         var value1 = sortme[key];
+
+        console.log("count of exception = ", value1);
+
         var service = key.split("---")[0];
         var exception = key.split("---")[1];
         var message = key.split("---")[2];
         //console.log(value1 + " - " + key);
-        newTable = newTable + "<TR><TD class='numeric-value'>" + value1 + "</TD><TD class='cell-hover ng-scope'>" + filingIdCnt + "</TD><TD class='cell-hover ng-scope'>" + service + "</TD><TD class='cell-hover ng-scope'>" + exception + "</TD><TD class='cell-hover ng-scope'>" + message + "</TD></TR>";
+        newTable = newTable + "<><TR><TD class='numeric-value'>" + value1 + "</TD><TD class='cell-hover ng-scope'>" + filingIdCnt + "</TD><TD class='cell-hover ng-scope'>" + service + "</TD><TD class='cell-hover ng-scope'>" + exception + "</TD><TD class='cell-hover ng-scope'>" + message + "</TD></TR>";
+
+        returnArray.push(["Count", value1], ["Filing Ids Effected", filingIdCnt], ["Service", service], ["Exception", exception], ["Message", message]);
     }
 
     newTable = newTable + "</TABLE>";
 
     document.querySelector("div[ng-if=spy\\.mode\\.name\\ \\=\\=\\=\\ \\\'response\\\']").innerHTML = newTable;
+
+
+
+    console.log("date table looks like ", returnArray);
+
+    return returnArray;
 }
 
 function getRequest(myString)
@@ -221,6 +235,14 @@ function addToMapFilingId(messageTxt, filingId)
     }
 }
 
+function openNav() {
+    document.getElementById("myNav").style.height = "100%";
+}
+
+function closeNav() {
+    document.getElementById("myNav").style.height = "0%";
+}
+
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse)
 {
     if (msg.text !== "hackNSlashExceptions")
@@ -236,4 +258,21 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse)
     }
 
     analyseExceptions(responseData.innerText);
+
+    openNav();
+
+    var overlayUrl = chrome.runtime.getURL("/overlay.html");
+    console.log("Overlay url:", overlayUrl);
+
+    var iframe = document.createElement("iframe");
+    iframe.setAttribute("src", overlayUrl);
+    iframe.setAttribute("style", "border:none;width:150px;height:30px;height: 100%;width: 100%;position: fixed;top: 0;left:  0;z-index: 909999999999;background: white;");
+    iframe.setAttribute("scrolling", "no");
+    iframe.setAttribute("frameborder", "0");
+    document.body.appendChild(iframe);
+
+
+    // <iframe src="chrome-extension://cnhaaigfenklkiodjehfkoablaoahabp/overlay.html" style="border:none;width:150px;height:30px;height: 100%;width: 100%;position: fixed;top: 0;left:  0;z-index: 909999999999;background: white;" scrolling="no" frameborder="0"></iframe>
+
 });
+
